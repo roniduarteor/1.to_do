@@ -18,6 +18,7 @@ const app = express()
 
 // conexão com o banco
 conn.sync().then(() => {
+    console.log("Olá, Mundo!")
     app.listen(PORT, () => {
         console.log(`Servidor on http://localhost:${PORT}`)
     })
