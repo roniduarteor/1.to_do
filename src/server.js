@@ -2,7 +2,11 @@ import "dotenv/config"
 import express, { request } from "express"
 import cors from "cors"
 
+// Importar Conexão com o Banco de Dados
 import conn from "./config/conn.js"
+
+// Importar os Modelos
+import Tarefa from './models/tarefaModel.js'
 
 // Importação das rotas
 import tarefaRouter from "./routes/tarefaRouter.js"
