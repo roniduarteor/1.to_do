@@ -1,13 +1,4 @@
-import Tarefa from '../models/tarefaModel.js'
-
-export const getAll = async (request, response) => {
-    try {
-        const tarefas = await Tarefa.findAll()
-        response.status(200).json(tarefas)
-    } catch (error) {
-        response.status(500).json({message: "Erro ao listar tarefas"})
-    }
-}
+import Tarefa from '../models/tarefaModel.js' // ta importando o modelo para criação da tabela
 
 export const create = async (request, response)=>{
     const {tarefa, descricao} = request.body
@@ -21,14 +12,14 @@ export const create = async (request, response)=>{
         return
     }
 
-    const novaTarefa = {
+    const novaTarefa = { // informações que vão ser inseridas
         tarefa, 
         descricao,
         status
     }
 
-    try {
-        await Tarefa.create(novaTarefa)
+    try { // para fazer o cadastro
+        await Tarefa.create(novaTarefa) // Cria a tarefa de acordo com o modelo que a gente criou da tabela lá em models (Tarefa), e coloca as informações que estamos inserindo (novaTarefa)
         response.status(201).json({message: "Tarefa cadastrada"})
     } catch (error) {
         console.error(error)
