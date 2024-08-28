@@ -52,3 +52,14 @@ export const getAll = async (request, response) => {
         response.status(500).json({ message: "Erro ao buscar tarefas" })
     }
 }
+
+export const getTarefa = async (request, response) => {
+    const {id} = request.params
+    try {
+        // const tarefa = await Tarefa.findOne({where: {id}})
+        const tarefa = await Tarefa.findByPk(id)
+        response.status(200).json(tarefa)
+    } catch (error) {
+        response.status(500).json({message: "Erro ao buscar tarefa"})
+    }
+}
