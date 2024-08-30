@@ -109,3 +109,33 @@ export const updateTarefa = async (request, response) => {
     }
 
 }
+
+export const updateStatus = async (request, response) => {
+    const {id} = request.params
+    const {status} = request.body
+
+
+    //validações
+    if(!status){
+        response.status(400).json({message: "O status é obrigatório!"})
+        return
+    }
+    
+
+    const tarefaAtualizada = {
+        status
+    }
+
+    try {
+        const [linhasAfetadas] = await Tarefa.update(tarefaAtualizada, { where: { id } })
+
+        if(linhasAfetadas <= 0){
+            response.status(404).json({message: "Tarefa não encontrada"})
+            return
+        }
+
+        response.status(200).json({message: "Status da tarefa atualizada!"})
+    } catch (error) {
+        response.status(500).json({err: "Erro ao atualizar status da tarefa"})
+    }
+}
