@@ -139,3 +139,21 @@ export const updateStatus = async (request, response) => {
         response.status(500).json({err: "Erro ao atualizar status da tarefa"})
     }
 }
+
+export const getByStatus = async (request, response) => {
+    const {status} = request.params
+    try {
+        const tarefa = await Tarefa.findOne({where: {status}})
+
+        if(tarefa === null){
+            response.status(404).json({message: "Tarefa não encontrada"})
+            return
+        }
+
+        response.status(200).json(tarefa)
+    } catch (error) {
+        response.status(500).json({message: "Erro ao buscar tarefa"})
+        console.log(error)
+        return
+    }
+}  
