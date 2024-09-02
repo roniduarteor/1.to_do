@@ -111,33 +111,63 @@ export const updateTarefa = async (request, response) => {
 }
 
 export const updateStatus = async (request, response) => {
-    const {id} = request.params
-    const {status} = request.body
-
-
-    //validações
-    if(!status){
-        response.status(400).json({message: "O status é obrigatório!"})
-        return
-    }
+    // ---- CÓDIGO DO PROFESSOR ----
     
-
-    const tarefaAtualizada = {
-        status
-    }
-
+    const {id} = request.params
     try {
-        const [linhasAfetadas] = await Tarefa.update(tarefaAtualizada, { where: { id } })
-
-        if(linhasAfetadas <= 0){
+        const tarefa = await Tarefa.findOne({ raw: true, where: {id} })
+        if(tarefa === null) {
             response.status(404).json({message: "Tarefa não encontrada"})
             return
         }
 
-        response.status(200).json({message: "Status da tarefa atualizada!"})
+        if(tarefa.status === "pedente"){
+            await Tarefa.update({status: "concluida"}, {where: {id}})
+        }else if(tarefa.status === "concluida"){
+            await Tarefa.update({status: "pedente"}, {where: {id}})
+        }
+
+        // nova consulta
+        const tarefaAtualizada = await Tarefa.findOne ({ raw: true, where: {id}})
+        response.status(200).json(tarefaAtualizada)
+
+        console.log(tarefa.status)
     } catch (error) {
-        response.status(500).json({err: "Erro ao atualizar status da tarefa"})
+        console.log(error)
+        response.status(500).json({message: "Erro ao atualizar status da tarefa"})
+        return
     }
+    
+    
+    // ---- MEU CÓDIGO ----
+    
+    // const {id} = request.params
+    // const {status} = request.body
+
+
+    // //validações
+    // if(!status){
+    //     response.status(400).json({message: "O status é obrigatório!"})
+    //     return
+    // }
+    
+
+    // const tarefaAtualizada = {
+    //     status
+    // }
+
+    // try {
+    //     const [linhasAfetadas] = await Tarefa.update(tarefaAtualizada, { where: { id } })
+
+    //     if(linhasAfetadas <= 0){
+    //         response.status(404).json({message: "Tarefa não encontrada"})
+    //         return
+    //     }
+
+    //     response.status(200).json({message: "Status da tarefa atualizada!"})
+    // } catch (error) {
+    //     response.status(500).json({err: "Erro ao atualizar status da tarefa"})
+    // }
 }
 
 export const getByStatus = async (request, response) => {
