@@ -1,16 +1,37 @@
 import Tarefa from '../models/tarefaModel.js' // ta importando o modelo para criação da tabela
+import { z } from 'zod'
+import formatZodError from '../helpers/formatZodError.js'
+
+// Validações com ZOD
+const createSchema = z.object({
+    tarefa: z
+    .string()
+    .min(3, {message: "A tarefa deve ter pelo menos 3 caracteres"})
+    .transform((txt)=> txt.toLowerCase()),
+    
+    descricao: z
+    .string()
+    .min(5, { message: "A Descricao deve ter pelo menos 5 caracteres"}),
+})
 
 export const create = async (request, response) => {
+    
+    //implementar a validação
+    const bodyValidation = createSchema.safeParse(request.body)
+    
+    if(!bodyValidation.success){
+        response.status(400).json({
+            message: "Os dados recebidos no corpo da requisição são inválidos", 
+            detalhes: formatZodError(bodyValidation.error)
+        })
+        return
+    }
+    
+    
     const { tarefa, descricao } = request.body
     const status = "pedente"
-    if (!tarefa) {
-        response.status(400).json({ err: "A tarefa é obrigatória" })
-        return
-    }
-    if (!descricao) {
-        response.status(400).json({ err: "A descrição é obrigatória" })
-        return
-    }
+    
+
 
     const novaTarefa = { // informações que vão ser inseridas
         tarefa,
