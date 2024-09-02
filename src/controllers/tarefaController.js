@@ -1,18 +1,9 @@
 import Tarefa from '../models/tarefaModel.js' // ta importando o modelo para criação da tabela
 import { z } from 'zod'
 import formatZodError from '../helpers/formatZodError.js'
+import { createSchema } from '../helpers/schema.js'
 
 // Validações com ZOD
-const createSchema = z.object({
-    tarefa: z
-    .string()
-    .min(3, {message: "A tarefa deve ter pelo menos 3 caracteres"})
-    .transform((txt)=> txt.toLowerCase()),
-    
-    descricao: z
-    .string()
-    .min(5, { message: "A Descricao deve ter pelo menos 5 caracteres"}),
-})
 
 export const create = async (request, response) => {
     
