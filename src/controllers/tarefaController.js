@@ -123,21 +123,6 @@ export const updateTarefa = async (request, response) => {
     const {id} = request.params
     const {tarefa, descricao, status} = request.body
 
-
-    //validações
-    if(!tarefa){
-        response.status(400).json({message: "A tarefa é obrigatória!"})
-        return
-    }
-    if(!status){
-        response.status(400).json({message: "O status é obrigatório!"})
-        return
-    }
-    if(!descricao){
-        response.status(400).json({message: "A descricao é obrigatória!"})
-        return
-    }
-
     const tarefaAtualizada = {
         tarefa,
         descricao,
