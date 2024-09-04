@@ -4,6 +4,25 @@ import formatZodError from '../helpers/formatZodError.js'
 import { createSchema } from '../helpers/schema.js'
 
 // Validações com ZOD
+const buscarTarefaPorSituacaoSchema = z.object({
+    situacao: z.enum(["pedente", "concluida"])
+})
+
+const updateTarefaSchema = z.object({
+    tarefa: z
+    .string()
+    .min(3, {message: "A tarefa deve ter pelo menos 3 caracteres"})
+    .transform((txt)=> txt.toLowerCase()),
+
+    descricao: z
+    .string()
+    .min(3, {message: "A descrição deve ter pelo menos 5 caracteres"}),
+
+    situacao: z
+    .enum(["pedente", "concluida"])
+})
+
+
 
 export const create = async (request, response) => {
     
@@ -83,6 +102,24 @@ export const getTarefa = async (request, response) => {
 }
 
 export const updateTarefa = async (request, response) => {
+    const paramValidator = getSchema.safeParse(request.params)
+    if(!paramValidator.success){
+        response.status(400).json({
+            message: "Número de identificação está inválido",
+            detalhes: formatZodError(paramValidator.error)
+    })
+    return
+    }
+    
+    const updateValidator = updateTarefaSchema.safeparse(request.body)
+    if(!updateValidator.sucess){
+        response.status(400).json({
+            message: "Dados para atualização inválidos",
+            details: formatZodError(updateValidator.error)
+        })
+        return
+    }
+
     const {id} = request.params
     const {tarefa, descricao, status} = request.body
 
@@ -124,6 +161,15 @@ export const updateTarefa = async (request, response) => {
 
 export const updateStatus = async (request, response) => {
     // ---- CÓDIGO DO PROFESSOR ----
+
+    const paramValidator = getSchema.safeParse(request.params)
+    if(!paramValidator.success){
+        response.status(400).json({
+            message: "Número de identificação está inválido",
+            detalhes: formatZodError(paramValidator.error)
+    })
+    return
+    }
     
     const {id} = request.params
     try {
@@ -184,6 +230,15 @@ export const updateStatus = async (request, response) => {
 
 export const getByStatus = async (request, response) => {
     // CÓDIGO CORRIGIDO
+
+    const situacaoValidation = buscarTarefaPorSituacaoSchema.safeParse(request.params)
+    if(!situacaoValidation.success){
+        response.status(400).json({
+            message: "Situação inválida",
+            details: formatZodError(situacaoValidation.error)
+        })
+        return
+    }
 
     const {situacao} = request.params
     if(situacao !== "pedente" || situacao !== "concluida"){
